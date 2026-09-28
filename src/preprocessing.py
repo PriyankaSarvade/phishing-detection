@@ -50,6 +50,24 @@ if __name__ == "__main__":
     # --- NEW: Save the File ---
     # Create the dataset folder if it doesn't exist
     os.makedirs("dataset", exist_ok=True) 
+
+    # --- NEW: Balance the Dataset ---
+    print("\n--- Balancing the Dataset ---")
+    legit = data[data['label'] == 0]
+    phishing = data[data['label'] == 1]
+    
+    # Find the smaller group size
+    min_size = min(len(legit), len(phishing))
+    
+    # Downsample both to match the minimum size
+    legit_balanced = legit.sample(n=min_size, random_state=42)
+    phishing_balanced = phishing.sample(n=min_size, random_state=42)
+    
+    # Combine and shuffle
+    data = pd.concat([legit_balanced, phishing_balanced]).sample(frac=1, random_state=42).reset_index(drop=True)
+    
+    print("New Balanced Distribution:")
+    print(data['label'].value_counts())
     
     # Save to a new CSV without keeping the row numbers (index=False)
     data.to_csv(output_path, index=False)

@@ -45,3 +45,24 @@ print(classification_report(y_test, predictions))
 # 6. Save the trained model
 joblib.dump(model, 'src/phishing_model.pkl')
 print("\nModel saved successfully as phishing_model.pkl!")
+
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Assuming your model is named 'model', and your test data is X_test and y_test
+print("--- Model Evaluation ---")
+
+# 1. Make predictions on the hidden testing data
+predictions = model.predict(X_test)
+
+# 2. Calculate overall accuracy
+accuracy = accuracy_score(y_test, predictions)
+print(f"Overall Accuracy: {accuracy * 100:.2f}%\n")
+
+# 3. Print the Confusion Matrix (Shows True Positives, False Positives, etc.)
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, predictions))
+print("\n")
+
+# 4. Print the detailed Classification Report
+print("Classification Report:")
+print(classification_report(y_test, predictions, target_names=['Legitimate (0)', 'Phishing (1)']))

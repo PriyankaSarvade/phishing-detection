@@ -1,3 +1,5 @@
+from pyexpat import features
+
 from flask import Flask, render_template, request
 import joblib
 import pandas as pd
@@ -31,7 +33,9 @@ def predict():
         
         # 4. Ask the model to predict (Output is usually [0] or [1])
         prediction_array = model.predict(features_df)
-        prediction_value = prediction_array[0] 
+        prediction_value = prediction_array[0]
+
+        print(features) # <-- Just add this one single line here!
         
         # 5. Translate the number back into English
         if prediction_value == 1:
