@@ -6,6 +6,7 @@ A machine learning-based web application that analyzes the lexical features of a
 * **URL Feature Extraction:** Extracts data like URL length, brand impersonation, IP usage, and suspicious keywords.
 * **Balanced Dataset:** Trained on a preprocessed, perfectly balanced dataset to prevent false positives.
 * **Random Forest Classifier:** Utilizes an ensemble learning method for high-accuracy predictions.
+* **Confidence Scoring:** Calculates real-time detection probability percentages for every scanned link.
 * **Flask Web Interface:** A simple UI for users to paste a link and instantly receive a verdict.
 
 ## 🛠️ How to Run Locally

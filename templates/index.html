@@ -29,11 +29,12 @@
         </form>
 
         {% if prediction_text %}
-            <div class="result {% if 'Safe' in prediction_text %}safe{% else %}phishing{% endif %}">
-                <p><strong>URL:</strong> {{ original_url }}</p>
-                <p><strong>Verdict:</strong> {{ prediction_text }}</p>
-            </div>
-        {% endif %}
+    <div class="result {% if 'Safe' in prediction_text %}safe{% else %}phishing{% endif %}">
+        <p><strong>URL:</strong> {{ original_url }}</p>
+        <p><strong>Verdict:</strong> {{ prediction_text }}</p>
+        <p><strong>Confidence:</strong> {{ confidence }}%</p>
+    </div>
+    {% endif %}
     </div>
 
 </body>

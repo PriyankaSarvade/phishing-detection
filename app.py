@@ -21,31 +21,32 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
-        # 1. Grab the URL typed into the HTML form
         target_url = request.form['url']
         
-        # 2. Extract the features (Count dots, length, HTTPS, etc.)
+        # 1. Extract features and convert to DataFrame
         features = extract_url_features(target_url)
-        
-        # 3. Convert to a Pandas DataFrame (Models require 2D data structures)
-        # We wrap 'features' in a list [] so it forms a single row
         features_df = pd.DataFrame([features])
         
-        # 4. Ask the model to predict (Output is usually [0] or [1])
-        prediction_array = model.predict(features_df)
-        prediction_value = prediction_array[0]
-
-        print(features) # <-- Just add this one single line here!
+        # 2. Get prediction and confidence probabilities
+        prediction_value = model.predict(features_df)[0]
+        probabilities = model.predict_proba(features_df)[0]
         
-        # 5. Translate the number back into English
+        # Calculate confidence percentage (highest probability)
+        confidence = round(max(probabilities) * 100, 2)
+        
+        # 3. Format message
         if prediction_value == 1:
             result = "⚠️ Warning: This is a Phishing/Malicious Link!"
         else:
             result = "✅ Safe: This looks like a Legitimate Link."
             
-        # 6. Send the result back to the HTML page to display it
-        return render_template('index.html', original_url=target_url, prediction_text=result)
-
+        # 4. Pass confidence score to the template
+        return render_template(
+            'index.html',
+            original_url=target_url,
+            prediction_text=result,
+            confidence=confidence
+        )
 if __name__ == '__main__':
     # Run the app locally in debug mode
     app.run(debug=True)

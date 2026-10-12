@@ -31,20 +31,36 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# 4. Train Random Forest Model
-print("Training model...")
-model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
-model.fit(X_train, y_train)
+from sklearn.model_selection import GridSearchCV
 
-# 5. Evaluate Accuracy & Classification Metrics
-predictions = model.predict(X_test)
-print(f"\nModel Accuracy: {accuracy_score(y_test, predictions) * 100:.2f}%\n")
-print("Detailed Classification Report:")
-print(classification_report(y_test, predictions))
+# 4. Train Random Forest Model using Hyperparameter Tuning
+print("Initiating Hyperparameter Tuning (This may take a few minutes)...")
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [None, 10, 20],
+    'min_samples_split': [2, 5],
+    'min_samples_leaf': [1, 2]
+}
 
-# 6. Save the trained model
+grid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=5, verbose=1, n_jobs=-1)
+grid_search.fit(X_train, y_train)
+
+print(f"\nBest Model Configuration: {grid_search.best_params_}")
+
+# We reassign the best result back to 'model' so your existing evaluation code below still works
+model = grid_search.best_estimator_ 
+
+# Extract Feature Importance
+print("\n--- Feature Importance Ranking ---")
+feature_importances = pd.DataFrame({
+    'Feature': X.columns,
+    'Importance': model.feature_importances_
+}).sort_values(by='Importance', ascending=False)
+print(feature_importances.to_string(index=False))
+
+# Overwrite your model file with this optimized version
 joblib.dump(model, 'src/phishing_model.pkl')
-print("\nModel saved successfully as phishing_model.pkl!")
+print("\nOptimized model saved successfully as phishing_model.pkl!")
 
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
